@@ -32,12 +32,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential perl make gcc
 
-      - name: Initialize CodeQL (custom rules)
-        uses: github/codeql-action/init@v4
-        with:
-          languages: cpp
-          queries: +./cbom-rules/CBOM_Rules
-
       - name: Setup CodeQL CLI
         uses: github/codeql-action/setup@v4
 
