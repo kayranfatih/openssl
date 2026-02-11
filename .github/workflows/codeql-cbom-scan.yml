@@ -8,7 +8,6 @@ on:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       security-events: write
@@ -32,10 +31,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential perl make gcc
 
-      - name: Setup CodeQL CLI
-        uses: github/codeql-action/setup@v4
+      - name: Initialize CodeQL (tooling)
+        uses: github/codeql-action/init@v4
+        with:
+          languages: cpp
+          queries: +./cbom-rules/CBOM_Rules
 
-      # Custom pack dependency'lerini indirir (cpp-all vs.)
       - name: Install CodeQL pack dependencies
         run: |
           codeql pack install --dir ./cbom-rules/CBOM_Rules
