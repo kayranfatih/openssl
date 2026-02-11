@@ -59,12 +59,25 @@ jobs:
           cd ./cbom-rules/CBOM_Rules
           codeql pack install
 
+      - name: Create OpenSSL build script
+        run: |
+          mkdir -p .github/tmp
+          cat << 'EOF' > .github/tmp/build-openssl.sh
+          #!/usr/bin/env bash
+          set -euo pipefail
+          ./config
+          make -j"$(nproc)"
+          EOF
+
+      - name: Make build script executable
+        run: chmod +x .github/tmp/build-openssl.sh
+
       - name: Create CodeQL database (cpp)
         run: |
           codeql database create openssl-codeql-db \
             --language=cpp \
             --source-root=. \
-            --command="bash -lc './config && make -j$(nproc)'"
+            --command=".github/tmp/build-openssl.sh"
 
       - name: Analyze with custom pack (SARIF + snippets)
         run: |
