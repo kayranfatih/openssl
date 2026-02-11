@@ -17,11 +17,15 @@ jobs:
       - name: Checkout OpenSSL repo
         uses: actions/checkout@v4
 
-      - name: Checkout CBOM Rules
+      - name: Checkout CBOM Rules (from kayranfatih/qpack)
         uses: actions/checkout@v4
         with:
-          repository: qpack/CBOM_Rules   # kendi repo adın
+          repository: kayranfatih/qpack
+          ref: main
           path: cbom-rules
+          sparse-checkout: |
+            CBOM_Rules
+          sparse-checkout-cone-mode: false
 
       - name: Install build deps
         run: |
@@ -32,7 +36,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: cpp
-          queries: +./cbom-rules
+          queries: +./cbom-rules/CBOM_Rules
 
       - name: Build OpenSSL
         run: |
