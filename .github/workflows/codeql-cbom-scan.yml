@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install -y build-essential perl make gcc
 
       - name: Initialize CodeQL (custom rules)
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/@v4
         with:
           languages: cpp
           queries: +./cbom-rules/CBOM_Rules
