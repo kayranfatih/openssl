@@ -2,8 +2,6 @@ name: codeql-openssl-sarif
 
 on:
   workflow_dispatch:
-  push:
-  pull_request:
 
 jobs:
   analyze:
