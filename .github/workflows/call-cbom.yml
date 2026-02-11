@@ -1,0 +1,10 @@
+name: call-cbom
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-cbom:
+    uses: kayranfatih/cbom-cyclonedx1.6/.github/workflows/run-cbom-cli.yml@main
+    with:
+      args: "--help"
