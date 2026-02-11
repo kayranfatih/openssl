@@ -1,0 +1,51 @@
+name: codeql-openssl-sarif
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout OpenSSL repo
+        uses: actions/checkout@v4
+
+      - name: Checkout CBOM Rules
+        uses: actions/checkout@v4
+        with:
+          repository: qpack/CBOM_Rules   # kendi repo adın
+          path: cbom-rules
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential perl make gcc
+
+      - name: Initialize CodeQL (custom rules)
+        uses: github/codeql-action/init@v3
+        with:
+          languages: cpp
+          queries: +./cbom-rules
+
+      - name: Build OpenSSL
+        run: |
+          ./Configure linux-x86_64
+          make -j"$(nproc)"
+
+      - name: Analyze and generate SARIF
+        uses: github/codeql-action/analyze@v3
+        with:
+          output: reports/sarif   # SARIF buraya yazılacak
+
+      - name: Upload SARIF artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-sarif-files
+          path: reports/sarif/**/*.sarif
