@@ -56,7 +56,8 @@ jobs:
           
       - name: Install CodeQL pack dependencies
         run: |
-          codeql pack install --dir ./cbom-rules/CBOM_Rules
+          cd ./cbom-rules/CBOM_Rules
+          codeql pack install
 
       - name: Create CodeQL database (cpp)
         run: |
