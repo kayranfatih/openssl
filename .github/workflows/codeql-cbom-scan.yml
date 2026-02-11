@@ -36,21 +36,18 @@ jobs:
         with:
           languages: cpp
           queries: +./cbom-rules/CBOM_Rules
+          
       - name: Add CodeQL to PATH
         run: |
           set -euo pipefail
       
-          # Önce varsa PATH'te mi bak
-          CODEQL_BIN="$(command -v codeql || true)"
-      
-          # Yoksa GitHub runner toolcache'te ara (en yaygını burası)
-          if [ -z "${CODEQL_BIN}" ]; then
-            CODEQL_BIN="$(find /opt/hostedtoolcache -type f -path '*/CodeQL/*/x64/codeql' -perm -111 2>/dev/null | head -n 1)"
-          fi
+          # init logunda görünen standart kurulum dizini:
+          # /opt/hostedtoolcache/CodeQL/<ver>/x64/codeql/codeql
+          CODEQL_BIN="$(find /opt/hostedtoolcache -type f -path '*/CodeQL/*/x64/codeql/codeql' -perm -111 2>/dev/null | head -n 1)"
       
           echo "Found: ${CODEQL_BIN}"
           if [ -z "${CODEQL_BIN}" ]; then
-            echo "CodeQL binary not found"
+            echo "CodeQL binary not found under /opt/hostedtoolcache"
             exit 1
           fi
       
