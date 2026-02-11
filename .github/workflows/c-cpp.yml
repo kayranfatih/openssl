@@ -1,0 +1,54 @@
+name: build-openssl-ubuntu
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential perl make gcc \
+            zlib1g-dev ca-certificates
+          perl -v
+          gcc --version
+          make --version
+
+      - name: Configure (static build)
+        run: |
+          ./Configure linux-x86_64 \
+            --prefix="$GITHUB_WORKSPACE/_install" \
+            --openssldir="$GITHUB_WORKSPACE/_install/ssl" \
+            no-shared
+
+      - name: Build
+        run: |
+          make -j"$(nproc)"
+
+      - name: Run tests
+        run: |
+          make test
+
+      - name: Install (binaries + libs)
+        run: |
+          make install_sw
+
+      - name: Smoke check (version)
+        run: |
+          "$GITHUB_WORKSPACE/_install/bin/openssl" version -a
+
+      - name: Upload install dir as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openssl-ubuntu-install
+          path: _install
