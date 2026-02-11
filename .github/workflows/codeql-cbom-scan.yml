@@ -64,7 +64,7 @@ jobs:
           codeql database create openssl-codeql-db \
             --language=cpp \
             --source-root=. \
-            --command="./Configure linux-x86_64 && make -j$(nproc)"
+            --command="./config && make -j$(nproc)"
 
       - name: Analyze with custom pack (SARIF + snippets)
         run: |
