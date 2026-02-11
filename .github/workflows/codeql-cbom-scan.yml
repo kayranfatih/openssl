@@ -38,15 +38,29 @@ jobs:
           languages: cpp
           queries: +./cbom-rules/CBOM_Rules
 
-      - name: Build OpenSSL
-        run: |
-          ./Configure linux-x86_64
-          make -j"$(nproc)"
+      - name: Setup CodeQL CLI
+        uses: github/codeql-action/setup@v4
 
-      - name: Analyze and generate SARIF
-        uses: github/codeql-action/analyze@v4
-        with:
-          output: reports/sarif   # SARIF buraya yazılacak
+      # Custom pack dependency'lerini indirir (cpp-all vs.)
+      - name: Install CodeQL pack dependencies
+        run: |
+          codeql pack install --dir ./cbom-rules/CBOM_Rules
+
+      - name: Create CodeQL database (cpp)
+        run: |
+          codeql database create openssl-codeql-db \
+            --language=cpp \
+            --source-root=. \
+            --command="./Configure linux-x86_64 && make -j$(nproc)"
+
+      - name: Analyze with custom pack (SARIF + snippets)
+        run: |
+          mkdir -p reports/sarif
+          codeql database analyze openssl-codeql-db \
+            ./cbom-rules/CBOM_Rules \
+            --format=sarif-latest \
+            --output=reports/sarif/codeqlresult.sarif \
+            --sarif-add-snippets
 
       - name: Upload SARIF artifacts
         uses: actions/upload-artifact@v4
