@@ -5,6 +5,6 @@ on:
 
 jobs:
   run-cbom:
-    uses: kayranfatih/cbom-cyclonedx1.6/.github/workflows/run-cbom-cli.yml@0e0242f
+    uses: kayranfatih/cbom-cyclonedx1.6/.github/workflows/run-cbom-cli.yml@master
     with:
       args: "--help"
