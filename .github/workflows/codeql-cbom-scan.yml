@@ -36,7 +36,13 @@ jobs:
         with:
           languages: cpp
           queries: +./cbom-rules/CBOM_Rules
-
+      - name: Add CodeQL to PATH
+        run: |
+          set -e
+          CODEQL_BIN="$(find "$HOME/.codeql" -type f -name codeql -perm -111 | head -n 1)"
+          echo "Found: $CODEQL_BIN"
+          echo "$(dirname "$CODEQL_BIN")" >> "$GITHUB_PATH"
+          codeql version
       - name: Install CodeQL pack dependencies
         run: |
           codeql pack install --dir ./cbom-rules/CBOM_Rules
