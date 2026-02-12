@@ -86,17 +86,18 @@ jobs:
             --output=reports/sarif/codeqlresult.sarif \
             --sarif-add-snippets
 
-      - name: Upload SARIF artifacts
+      - name: Upload SARIF artifact
         uses: actions/upload-artifact@v4
         with:
-          name: codeql-sarif-files
+          name: codeql-sarif
           path: reports/sarif/codeqlresult.sarif
-          
+
   cbom:
     needs: analyze
-    permissions:
-      contents: read
     uses: kayranfatih/cbom-cyclonedx1.6/.github/workflows/run-cbom-cli.yml@main
     with:
-      args: "generate ../reports/sarif/codeqlresult.sarif -o ../reports/sarif/openssl_cbom.json -cc"
+      sarif_artifact: codeql-sarif
+      sarif_file: codeqlresult.sarif
+      out_json: openssl_cbom.json
+      cc: true
       
